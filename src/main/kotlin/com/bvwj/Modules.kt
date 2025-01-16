@@ -1,11 +1,10 @@
 package com.bvwj
 
-import com.bvwj.controller.ReceiptRouter
+import com.bvwj.repository.ReceiptRepository
 import com.bvwj.services.ReceiptService
 import org.koin.dsl.module
 
-class Modules {
-    val appModules = module {
-        single<ReceiptRouter> { ReceiptRouter }
-    }
+val myModules = module {
+    single { ReceiptService(get()) }
+    single { ReceiptRepository() } // datastore
 }

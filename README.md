@@ -1,6 +1,6 @@
 # receipt-processor
 
-This project was created using the [Ktor Project Generator](https://start.ktor.io).
+This project is based off of this GitHub [repository](https://github.com/fetch-rewards/receipt-processor-challenge).
 
 ## Features
 

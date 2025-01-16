@@ -7,6 +7,7 @@ import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import org.koin.ktor.plugin.Koin
 
 fun main(args: Array<String>) {
     embeddedServer(
@@ -18,6 +19,7 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+    install(Koin) { modules(myModules) }
     install(ContentNegotiation) { json() }
     receiptRouter()
 }
