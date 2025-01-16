@@ -8,29 +8,34 @@ import io.ktor.server.request.receive
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
+import org.koin.java.KoinJavaComponent.inject
 import java.util.UUID
 
-fun Application.receiptRouter(receiptService: ReceiptService) {
-    routing {
-        post("/receipts/process") {
-            val receipt = call.receive<Receipt>()
-            val uuid = receiptService.add(receipt)
+object ReceiptRouter {
+    fun Application.receiptRouter() {
+//        val receiptService: ReceiptService by inject()
 
-            call.respond(
-                HttpStatusCode.Created,
-                IdResponse(uuid)
-            )
-        }
+        routing {
+            post("/receipts/process") {
+                val receipt = call.receive<Receipt>()
+//                val uuid = receiptService.add(receipt)
 
-        get("/receipts/{id}/points") {
-            val id = call.parameters["id"]
+//                call.respond(
+//                    HttpStatusCode.Created,
+//                    IdResponse(uuid)
+//                )
+            }
 
-            // grab receipt from ID
-            val receipt: Int = receiptService.getPointsById(id)
-            call.respond(
-                HttpStatusCode.OK,
-                receipt.items
-            )
+            get("/receipts/{id}/points") {
+                val id = call.parameters["id"]
+
+                // grab receipt from ID
+//                val receipt: Int = receiptService.getPointsById(id)
+//                call.respond(
+//                    HttpStatusCode.OK,
+//                    receipt.items
+//                )
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 val kotlin_version: String by project
 val logback_version: String by project
 val mongodb_kotlin_driver: String by project
+val koin_version: String by project
 
 plugins {
     kotlin("jvm") version "2.1.0"
@@ -12,7 +13,7 @@ group = "com.bvwj"
 version = "0.0.1"
 
 application {
-    mainClass.set("io.ktor.server.netty.EngineMain")
+//    mainClass.set("io.ktor.server.netty.EngineMain")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
@@ -32,6 +33,9 @@ dependencies {
 
     implementation("org.mongodb:mongodb-driver-kotlin-coroutine:$mongodb_kotlin_driver")
     implementation("org.mongodb:bson-kotlinx:$mongodb_kotlin_driver")
+
+    implementation(project.dependencies.platform("io.insert-koin:koin-bom:$koin_version"))
+    implementation("io.insert-koin:koin-core")
 
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
