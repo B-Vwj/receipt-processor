@@ -1,18 +1,30 @@
 package com.bvwj.structures
 
+import com.bvwj.controller.serializers.LocalDateSerializer
+import com.bvwj.controller.serializers.UUIDSerializer
 import io.ktor.utils.io.core.toByteArray
-import java.time.LocalDateTime
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 import kotlin.math.roundToInt
 
+@Serializable
 data class ReceiptEntity(
     val retailer: String,
-    val purchaseDate: LocalDateTime,
+
+    @Serializable(with = LocalDateSerializer::class)
+    @SerialName("purchase_date")
+    val purchaseDate: LocalDate,
+
+    @SerialName("purchase_time")
     val purchaseTime: String,
+
     val items: List<Item>,
     val total: String
 ) {
+    @Serializable(with = UUIDSerializer::class)
     val id: UUID = UUID.nameUUIDFromBytes("${retailer}.${purchaseDate}.${purchaseTime}.${items}.${total}".toByteArray())
     val points: Int = generatePoints(receipt = this)
 }
@@ -23,7 +35,7 @@ data class ReceiptEntity(
  */
 internal fun ReceiptEntity.receiptEntityToReceipt(
     retailer: String,
-    purchaseDate: LocalDateTime,
+    purchaseDate: LocalDate,
     purchaseTime: String,
     items: List<Item>,
     total: String
@@ -35,9 +47,9 @@ internal fun ReceiptEntity.receiptEntityToReceipt(
     total = total,
 )
 
-private fun convertDateToString(localDateTime: LocalDateTime): String {
+private fun convertDateToString(localDate: LocalDate): String {
     val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    return localDateTime.format(pattern)
+    return localDate.format(pattern)
 }
 
 /**

@@ -1,4 +1,4 @@
-package structures
+package com.bvwj.data
 
 import com.bvwj.structures.Item
 import com.bvwj.structures.Receipt

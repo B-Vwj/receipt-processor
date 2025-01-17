@@ -9,13 +9,20 @@ import com.bvwj.services.ReceiptService.Companion.ErrorHandler.EMPTY_ITEM_LIST_E
 import com.bvwj.services.ReceiptService.Companion.ErrorHandler.INVALID_DATE_FORMAT
 import com.bvwj.services.ReceiptService.Companion.ErrorHandler.INVALID_TIME_FORMAT
 import com.bvwj.services.ReceiptService.Companion.ErrorHandler.INVALID_TOTAL_FORMAT
+import com.bvwj.services.ReceiptService.Companion.ErrorHandler.POINTS_NOT_FOUND
+import com.bvwj.services.ReceiptService.Companion.Validator.validDateString
+import com.bvwj.services.ReceiptService.Companion.Validator.validTimeString
+import com.bvwj.services.ReceiptService.Companion.Validator.validTotalString
 import com.bvwj.structures.Receipt
 import com.bvwj.structures.toReceiptEntity
-import java.time.LocalDateTime
+import io.ktor.server.plugins.NotFoundException
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
+
 class ReceiptService(private val receiptRepository: ReceiptRepository) {
-    internal fun add(receipt: Receipt): UUID {
+    internal suspend fun add(receipt: Receipt): UUID {
         // validation
         // -- Check strings for empty or spaces "" or " "
         require(receipt.retailer.isNotBlank()) { BLANK_RETAILER_ERROR }
@@ -34,7 +41,9 @@ class ReceiptService(private val receiptRepository: ReceiptRepository) {
 
         // -- Make sure date is correct format "YYYY-MM-DD"
         require(validDateString(receipt.purchaseDate)) { INVALID_DATE_FORMAT }
-        val date = LocalDateTime.parse(receipt.purchaseDate)
+
+        val parser = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val date = LocalDate.parse(receipt.purchaseDate, parser)
 
         val receiptEntity = toReceiptEntity(
             retailer = receipt.retailer,
@@ -48,25 +57,18 @@ class ReceiptService(private val receiptRepository: ReceiptRepository) {
         return receiptEntity.id
     }
 
-    internal fun getPointsById(uuid: UUID): Int {
+    internal suspend fun getPointsById(uuid: UUID): Int {
         val receiptEntity = receiptRepository.getById(uuid = uuid)
-        return receiptEntity.points
-    }
-
-    private fun validTotalString(total: String): Boolean {
-        return total.matches(TOTAL_FORMAT_REGEX_PATTERN)
-    }
-
-    private fun validTimeString(time: String): Boolean {
-        return time.matches(TIME_FORMAT_REGEX_PATTERN)
-    }
-
-    private fun validDateString(date: String): Boolean {
-        return date.matches(DATE_FORMAT_REGEX_PATTERN)
+        if (receiptEntity != null) {
+            return receiptEntity.points
+        } else {
+            throw NotFoundException("$POINTS_NOT_FOUND: $uuid")
+        }
     }
 
     companion object {
         object ErrorHandler {
+            const val POINTS_NOT_FOUND = "No points found for "
             const val BLANK_RETAILER_ERROR = "Retailer field cannot be blank."
             const val BLANK_PURCHASE_DATE_ERROR = "Purchase date field cannot be blank."
             const val BLANK_PURCHASE_TIME_ERROR = "Purchase time field cannot be blank."
@@ -77,8 +79,22 @@ class ReceiptService(private val receiptRepository: ReceiptRepository) {
             const val INVALID_DATE_FORMAT = "Invalid date format."
         }
 
-        val TOTAL_FORMAT_REGEX_PATTERN = Regex(pattern = "^[0-9]\\d*\\.\\d{2}?\$")
-        val TIME_FORMAT_REGEX_PATTERN = Regex(pattern = "^([01]?\\d|2[0-3]):([0-5]?\\d)\$")
-        val DATE_FORMAT_REGEX_PATTERN = Regex(pattern = "^\\d{4}-\\d{2}-\\d{2}\$")
+        object Validator {
+            private val TOTAL_FORMAT_REGEX_PATTERN = Regex(pattern = "^[0-9]\\d*\\.\\d{2}?\$")
+            private val TIME_FORMAT_REGEX_PATTERN = Regex(pattern = "^([01]?\\d|2[0-3]):([0-5]?\\d)\$")
+            private val DATE_FORMAT_REGEX_PATTERN = Regex(pattern = "^\\d{4}-\\d{2}-\\d{2}\$")
+
+            internal fun validTotalString(total: String): Boolean {
+                return total.matches(TOTAL_FORMAT_REGEX_PATTERN)
+            }
+
+            internal fun validTimeString(time: String): Boolean {
+                return time.matches(TIME_FORMAT_REGEX_PATTERN)
+            }
+
+            internal fun validDateString(date: String): Boolean {
+                return date.matches(DATE_FORMAT_REGEX_PATTERN)
+            }
+        }
     }
 }

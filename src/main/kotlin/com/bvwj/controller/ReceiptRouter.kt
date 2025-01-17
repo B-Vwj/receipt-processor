@@ -10,6 +10,8 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import io.ktor.server.util.getOrFail
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
 import java.util.UUID
 
@@ -35,6 +37,13 @@ object ReceiptRouter {
     }
 }
 
-data class IdResponse(val id: UUID)
+@Serializable
+data class IdResponse(
+    @Contextual
+    val id: UUID
+)
 
-data class PointResponse(val points: Int)
+@Serializable
+data class PointResponse(
+    val points: Int
+)
