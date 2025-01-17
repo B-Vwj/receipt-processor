@@ -1,6 +1,7 @@
 package com.bvwj.repository
 
 import com.bvwj.structures.ReceiptEntity
+import java.time.LocalDateTime
 import java.util.UUID
 
 class ReceiptRepository {
@@ -13,7 +14,7 @@ class ReceiptRepository {
 
         return ReceiptEntity(
             retailer = "",
-            purchaseDate = "",
+            purchaseDate = LocalDateTime.now(),
             purchaseTime = "",
             items = listOf(),
             total = ""
