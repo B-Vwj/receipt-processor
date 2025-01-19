@@ -1,9 +1,26 @@
-package com.bvwj.data
+package com.bvwj
 
 import com.bvwj.structures.Item
 import com.bvwj.structures.Receipt
+import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.testing.testApplication
+import junit.framework.TestCase.assertEquals
+import org.junit.jupiter.api.TestInstance
+import kotlin.test.Test
 
-object TestData {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class ReceiptProcessorSystemTest {
+    @Test
+    fun getHealthEndpointReturnsUp() = testApplication {
+        application { module() }
+        val response = client.get("/health")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals("up", response.bodyAsText())
+    }
+
     val RECEIPT_MORNING_TEST_DATA = Receipt(
         retailer = "Walgreens",
         purchaseDate = "2022-01-02",
