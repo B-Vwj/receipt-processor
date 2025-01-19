@@ -1,5 +1,6 @@
 package com.bvwj.controller
 
+import com.bvwj.controller.serializers.UUIDSerializer
 import com.bvwj.services.ReceiptService
 import com.bvwj.structures.Receipt
 import io.ktor.http.HttpStatusCode
@@ -10,7 +11,6 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import io.ktor.server.util.getOrFail
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
 import java.util.UUID
@@ -33,13 +33,17 @@ object ReceiptRouter {
                     call.respond(HttpStatusCode.OK, PointResponse(points))
                 }
             }
+
+            get("/health") {
+                call.respond(HttpStatusCode.OK, "up")
+            }
         }
     }
 }
 
 @Serializable
 data class IdResponse(
-    @Contextual
+    @Serializable(with = UUIDSerializer::class)
     val id: UUID
 )
 
