@@ -23,4 +23,4 @@ FROM eclipse-temurin:23
 EXPOSE 8080
 RUN mkdir /opt/app
 COPY build/libs/*.jar /opt/app/
-CMD ["java", "-jar", "/opt/app/receipt-processor-all.jar"]
+ENTRYPOINT ["java", "-jar", "/opt/app/receipt-processor-all.jar"]

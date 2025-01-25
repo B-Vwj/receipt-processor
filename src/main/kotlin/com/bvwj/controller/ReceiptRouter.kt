@@ -1,5 +1,7 @@
 package com.bvwj.controller
 
+import com.bvwj.controller.RouterRoutes.ADD_RECEIPT
+import com.bvwj.controller.RouterRoutes.GET_POINTS
 import com.bvwj.controller.serializers.UUIDSerializer
 import com.bvwj.services.ReceiptService
 import com.bvwj.structures.Receipt
@@ -20,14 +22,14 @@ object ReceiptRouter {
         val receiptService: ReceiptService by inject()
 
         routing {
-            post("/receipts/process") {
+            post(ADD_RECEIPT) {
                 val receipt = call.receive<Receipt>()
                 receiptService.add(receipt).let { uuid ->
                     call.respond(HttpStatusCode.Created, IdResponse(uuid))
                 }
             }
 
-            get("/receipts/{id}/points") {
+            get(GET_POINTS) {
                 val uuid: UUID = call.parameters.getOrFail(name = "id").let { UUID.fromString(it) }
                 receiptService.getPointsById(uuid).let { points ->
                     call.respond(HttpStatusCode.OK, PointResponse(points))
@@ -39,6 +41,11 @@ object ReceiptRouter {
             }
         }
     }
+}
+
+object RouterRoutes {
+    const val ADD_RECEIPT = "/receipts/process"
+    const val GET_POINTS = "/receipts/{id}/points"
 }
 
 @Serializable

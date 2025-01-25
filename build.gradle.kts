@@ -2,6 +2,7 @@ val kotlin_version: String by project
 val logback_version: String by project
 val mongodb_kotlin_driver: String by project
 val koin_version: String by project
+val mockk_version: String by project
 
 plugins {
     kotlin("jvm") version "2.1.0"
@@ -40,4 +41,6 @@ dependencies {
 
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    testImplementation("io.mockk:mockk:$mockk_version")
+    testImplementation("io.ktor:ktor-client-content-negotiation:$kotlin_version")
 }

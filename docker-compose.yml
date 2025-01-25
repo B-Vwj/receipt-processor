@@ -1,4 +1,13 @@
 services:
+  ktor-web-app:
+    build: .
+    ports:
+      -  "8080:8080"
+    depends_on:
+      - mongo
+#    environment:
+#      HOST: "mongodb"
+
   mongo:
     image: mongo
     restart: always

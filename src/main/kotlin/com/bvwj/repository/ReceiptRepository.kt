@@ -1,7 +1,5 @@
 package com.bvwj.repository
 
-import com.bvwj.structures.Item
-import com.bvwj.structures.Receipt
 import com.bvwj.structures.ReceiptEntity
 import com.mongodb.client.model.Filters
 import com.mongodb.kotlin.client.coroutine.MongoCollection

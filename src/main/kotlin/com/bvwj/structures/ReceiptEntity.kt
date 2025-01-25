@@ -33,23 +33,17 @@ data class ReceiptEntity(
  * Convert [ReceiptEntity] to [Receipt]
  * @return  [Receipt]
  */
-internal fun ReceiptEntity.receiptEntityToReceipt(
-    retailer: String,
-    purchaseDate: LocalDate,
-    purchaseTime: String,
-    items: List<Item>,
-    total: String
-) = Receipt(
-    retailer = retailer,
-    purchaseDate = convertDateToString(purchaseDate),
-    purchaseTime = purchaseTime,
-    items = items,
-    total = total,
+internal fun ReceiptEntity.receiptEntityToReceipt() = Receipt(
+    retailer = this.retailer,
+    purchaseDate = this.purchaseDate.convertDateToString(),
+    purchaseTime = this.purchaseTime,
+    items = this.items,
+    total = this.total,
 )
 
-private fun convertDateToString(localDate: LocalDate): String {
+private fun LocalDate.convertDateToString(): String {
     val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    return localDate.format(pattern)
+    return this.format(pattern)
 }
 
 /**

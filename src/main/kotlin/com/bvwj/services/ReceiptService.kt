@@ -16,8 +16,6 @@ import com.bvwj.services.ReceiptService.Companion.Validator.validTotalString
 import com.bvwj.structures.Receipt
 import com.bvwj.structures.toReceiptEntity
 import io.ktor.server.plugins.NotFoundException
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 
@@ -42,16 +40,7 @@ class ReceiptService(private val receiptRepository: ReceiptRepository) {
         // -- Make sure date is correct format "YYYY-MM-DD"
         require(validDateString(receipt.purchaseDate)) { INVALID_DATE_FORMAT }
 
-        val parser = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val date = LocalDate.parse(receipt.purchaseDate, parser)
-
-        val receiptEntity = toReceiptEntity(
-            retailer = receipt.retailer,
-            purchaseDate = date,
-            purchaseTime = receipt.purchaseTime,
-            items = receipt.items,
-            total = receipt.total
-        )
+        val receiptEntity = receipt.toReceiptEntity()
         receiptRepository.add(receiptEntity)
 
         return receiptEntity.id
